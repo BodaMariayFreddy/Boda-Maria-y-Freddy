@@ -3,124 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>María & Freddy 2026</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital@0;1&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <title>María & Freddy | 24.10.2026</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
     <style>
-        :root { --oro: #b4975a; --crema: #f9f7f2; --vino: #630d16; --texto: #333; }
-        body, html { margin: 0; padding: 0; background: var(--crema); font-family: 'Montserrat', sans-serif; color: var(--texto); overflow-x: hidden; }
-        
-        /* SOBRE INICIAL */
-        #envelope-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e8e2d6; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
-        .envelope { position: relative; width: 280px; height: 180px; background: #fffcf5; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 4px; }
-        .flap { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 100px solid #dcd3c1; transform-origin: top; transition: 0.6s; z-index: 3; }
-        .seal { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; background: var(--vino); border-radius: 50%; z-index: 4; display: flex; align-items: center; justify-content: center; color: var(--oro); font-family: 'Cinzel', serif; font-weight: bold; border: 2px solid #80101b; }
-        .open-env .flap { transform: rotateX(180deg); }
-        .open-env .seal { opacity: 0; transform: translateX(-50%) scale(0); }
+        :root {
+            --gold: #c4a065;
+            --bg-crema: #fcfbf9;
+            --vino: #8a1c1c;
+            --text-dark: #2c2c2c;
+            --text-soft: #666;
+        }
 
-        /* CONTENIDO WEB */
-        #main-content { opacity: 0; display: none; transition: 1s; }
-        section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px 20px; text-align: center; box-sizing: border-box; }
-        h1 { font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--oro); margin: 10px 0; }
-        h2 { font-family: 'Cinzel', serif; color: var(--oro); font-size: 1.5rem; margin-bottom: 30px; }
-        
-        /* LÍNEA CRONOLÓGICA */
-        .timeline { position: relative; max-width: 400px; margin: 0 auto; padding: 20px 0; }
-        .timeline-item { padding: 20px; border-left: 2px solid var(--oro); position: relative; margin-left: 20px; text-align: left; }
-        .timeline-item::before { content: ''; position: absolute; left: -9px; top: 25px; width: 16px; height: 16px; background: var(--crema); border: 2px solid var(--oro); border-radius: 50%; }
-        .time { font-weight: bold; color: var(--oro); font-family: 'Cinzel'; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-crema); font-family: 'Montserrat', sans-serif; color: var(--text-dark); overflow: hidden; }
+        h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
 
-        .btn { display: inline-block; padding: 12px 25px; margin: 15px 5px; border: 1px solid var(--oro); color: var(--oro); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; transition: 0.3s; }
-        .btn:hover { background: var(--oro); color: white; }
-        .phrase { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.2rem; margin: 20px 0; }
+        /* --- SOBRE (INICIO) --- */
+        #welcome-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: #edece8; z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: transform 1.2s cubic-bezier(0.86, 0, 0.07, 1);
+            cursor: pointer;
+        }
+        .envelope {
+            width: 300px; height: 200px; background: #fff;
+            position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            display: flex; justify-content: center; align-items: center;
+            border-radius: 4px;
+        }
+        .wax-seal {
+            width: 60px; height: 60px; background: var(--vino); border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            color: #dcbfa5; font-family: 'Cormorant Garamond'; font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10;
+        }
+        .click-hint { margin-top: 30px; font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: #999; animation: pulse 2s infinite; }
+
+        /* --- SITIO PRINCIPAL --- */
+        #main-site { opacity: 0; visibility: hidden; transition: opacity 1.5s ease; height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        header {
+            height: 100vh; background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80') center/cover;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;
+        }
+        .hero-title { font-size: 3.5rem; margin-bottom: 10px; }
+        .hero-date { font-size: 1.1rem; letter-spacing: 4px; border-top: 1px solid white; border-bottom: 1px solid white; padding: 10px 20px; margin-top: 15px; }
+
+        /* Secciones */
+        section { padding: 60px 20px; max-width: 800px; margin: 0 auto; text-align: center; }
+        .section-title { font-size: 2.2rem; color: var(--gold); margin-bottom: 30px; }
+
+        /* Cronograma */
+        .timeline { position: relative; max-width: 500px; margin: 0 auto; padding-left: 30px; }
+        .event { position: relative; padding-bottom: 40px; text-align: left; border-left: 1px solid #ddd; padding-left: 30px; }
+        .event::before { content: ''; position: absolute; left: -6px; top: 0; width: 11px; height: 11px; background: var(--gold); border-radius: 50%; }
+        .event-time { font-family: 'Cormorant Garamond'; font-size: 1.4rem; color: var(--gold); }
+
+        /* Countdown */
+        .countdown-wrapper { display: flex; justify-content: center; gap: 20px; margin: 30px 0; }
+        .time-unit { font-size: 2rem; display: block; }
+        .time-label { font-size: 0.6rem; color: #999; }
+
+        /* Botones */
+        .btn-gold {
+            display: inline-block; background: var(--gold); color: white; padding: 15px 40px;
+            text-decoration: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem;
+            margin-top: 20px; border: none; cursor: pointer;
+        }
+
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
     </style>
 </head>
-<body onclick="abrirInvitacion()">
+<body onclick="openInvitation()">
 
-    <div id="envelope-container">
-        <div class="envelope" id="sobre">
-            <div class="flap"></div>
-            <div class="seal">M&F</div>
+    <div id="welcome-layer">
+        <div class="envelope">
+            <div class="wax-seal">M&F</div>
         </div>
-        <p style="margin-top: 30px; font-family: 'Cinzel'; color: #8a765a;">Toca para abrir</p>
+        <div class="click-hint">Toca para descubrir</div>
     </div>
 
-    <div id="main-content">
-        <section>
-            <div class="reveal">
-                <p style="letter-spacing: 5px;">NUESTRA BODA</p>
-                <h1>María & Freddy</h1>
-                <p class="phrase">"Ambulancias forever"</p>
-                <div style="border-top: 1px solid var(--oro); border-bottom: 1px solid var(--oro); padding: 10px 40px; margin: 20px 0;">
-                    24 . 10 . 2026
-                </div>
-            </div>
-        </section>
+    <div id="main-site">
+        <header>
+            <p style="letter-spacing: 3px;">NUESTRA BODA</p>
+            <h1 class="hero-title">María & Freddy</h1>
+            <div class="hero-date">24 . OCT . 2026</div>
+            <p style="margin-top: 20px; font-style: italic;">"Ambulancias forever"</p>
+        </header>
 
-        <section style="background-color: #fff;">
-            <div class="reveal">
-                <h2>Cronograma del Día</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <span class="time">12:00H</span>
-                        <p><strong>Ceremonia Religiosa</strong><br>Concatedral de Sta María la Redonda</p>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="time">14:00H</span>
-                        <p><strong>Cóctel de Bienvenida</strong><br>Celebración y brindis</p>
-                    </div>
-                    <div class="timeline-item">
-                        <span class="time">15:30H</span>
-                        <p><strong>Banquete y Fiesta</strong><br>¡A bailar "forever"!</p>
-                    </div>
-                </div>
+        <section>
+            <div class="countdown-wrapper reveal-up">
+                <div><span class="time-unit" id="d">00</span><span class="time-label">DÍAS</span></div>
+                <div><span class="time-unit" id="h">00</span><span class="time-label">HRS</span></div>
+                <div><span class="time-unit" id="m">00</span><span class="time-label">MIN</span></div>
+                <div><span class="time-unit" id="s">00</span><span class="time-label">SEG</span></div>
             </div>
         </section>
 
         <section>
-            <div class="reveal">
-                <h2>Ubicación</h2>
-                <p>Concatedral de Santa María la Redonda<br>Logroño, La Rioja</p>
-                <a href="https://maps.app.goo.gl/YyR9YmYvN5uXWjQy8" target="_blank" class="btn">Abrir en Google Maps</a>
-                
-                <h2 style="margin-top:50px">Asistencia</h2>
-                <p>Por favor, confirma antes del 24 de agosto.</p>
-                <a href="https://wa.me/?text=¡Hola! Confirmamos nuestra asistencia a vuestra boda." class="btn">Confirmar WhatsApp</a>
+            <h2 class="section-title reveal-up">Itinerario</h2>
+            <div class="timeline reveal-up">
+                <div class="event">
+                    <div class="event-time">12:30</div>
+                    <p><strong>Ceremonia Religiosa</strong><br>Concatedral Sta. María la Redonda</p>
+                </div>
+                <div class="event">
+                    <div class="event-time">14:30</div>
+                    <p><strong>Cóctel de Bienvenida</strong></p>
+                </div>
+                <div class="event">
+                    <div class="event-time">15:30</div>
+                    <p><strong>Banquete & Fiesta</strong></p>
+                </div>
             </div>
         </section>
 
-        <section style="background-color: #fff;">
-            <div class="reveal">
-                <h2>Detalles</h2>
-                <p>Vuestra presencia es nuestro mejor regalo, pero si queréis tener un detalle:</p>
-                <button class="btn" onclick="alert('IBAN: ES00 0000 0000 0000 0000')">Ver Cuenta Bancaria</button>
-                
-                <h2 style="margin-top:50px">Playlist</h2>
-                <p>¿Qué canción no puede faltar?</p>
-                <a href="#" class="btn" style="font-size:0.7rem">Añadir Música</a>
-            </div>
-            <p style="margin-top: 80px; opacity: 0.3; font-size: 0.8rem;">M & F | 2026</p>
+        <section style="background: white;">
+            <h2 class="section-title reveal-up">Ubicación</h2>
+            <p>Logroño, La Rioja</p>
+            <a href="https://maps.app.goo.gl/3A6F1RjE9B5yY6mN8" target="_blank" class="btn-gold">Ver en Google Maps</a>
+        </section>
+
+        <section>
+            <h2 class="section-title reveal-up">Confirmación</h2>
+            <p>Rogamos confirmar antes del 24 de Agosto.</p>
+            <a href="https://wa.me/34600000000?text=Hola! Confirmamos nuestra asistencia" class="btn-gold">Confirmar por WhatsApp</a>
+        </section>
+
+        <section style="padding-bottom: 100px;">
+            <h2 class="section-title reveal-up">Mesa de Regalos</h2>
+            <p>Tu presencia es lo mejor, pero si deseas tener un detalle:</p>
+            <button class="btn-gold" style="background:transparent; color:var(--gold); border:1px solid var(--gold);" onclick="alert('IBAN: ES21 0000 0000 0000 0000')">Ver Cuenta</button>
         </section>
     </div>
 
     <script>
-        function abrirInvitacion() {
-            document.getElementById('sobre').classList.add('open-env');
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#b4975a', '#630d16', '#ffffff'] });
+        function openInvitation() {
+            document.getElementById('welcome-layer').style.transform = 'translateY(-100%)';
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             
             setTimeout(() => {
-                document.getElementById('envelope-container').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('envelope-container').style.display = 'none';
-                    document.getElementById('main-content').style.display = 'block';
-                    document.getElementById('main-content').style.opacity = '1';
-                    document.body.style.overflow = 'auto';
-                    ScrollReveal().reveal('.reveal', { distance: '50px', duration: 1000, origin: 'bottom', interval: 200 });
-                }, 500);
-            }, 600);
+                const site = document.getElementById('main-site');
+                site.style.visibility = 'visible';
+                site.style.opacity = '1';
+                document.body.style.overflow = 'auto';
+                ScrollReveal().reveal('.reveal-up', { distance: '50px', duration: 1000, origin: 'bottom', interval: 150 });
+            }, 800);
         }
+
+        // Cuenta atrás
+        const weddingDate = new Date("Oct 24, 2026 12:30:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const diff = weddingDate - now;
+            if (diff > 0) {
+                document.getElementById('d').innerText = Math.floor(diff / (86400000));
+                document.getElementById('h').innerText = Math.floor((diff % 86400000) / 3600000);
+                document.getElementById('m').innerText = Math.floor((diff % 3600000) / 60000);
+                document.getElementById('s').innerText = Math.floor((diff % 60000) / 1000);
+            }
+        }, 1000);
     </script>
 </body>
 </html>
+
 
