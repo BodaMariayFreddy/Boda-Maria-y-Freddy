@@ -11,298 +11,208 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 
     <style>
-        /* --- PALETA DE COLORES & VARIABLES --- */
         :root {
-            --bg-crema: #faf9f6; /* Blanco roto premium, no nuclear */
-            --text-dark: #222222; /* Negro carbón suave */
-            --text-light: #666666;
-            --accent-gold: #a48b68; /* Oro viejo sutil */
-            --font-title: 'Cormorant Garamond', serif;
-            --font-body: 'Montserrat', sans-serif;
+            --bg-paper: #f4f1ea; /* Papel artesanal */
+            --envelope-dark: #dcd3c1; /* Sombra del sobre */
+            --envelope-light: #fffcf7; /* Frente del sobre */
+            --text-dark: #1a1a1a;
+            --accent-gold: #a48b68;
         }
 
-        /* --- RESET & BASES --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100%; overflow: hidden; }
         body { 
-            background-color: var(--bg-crema); 
-            font-family: var(--font-body); 
+            background-color: var(--bg-paper); 
+            font-family: 'Montserrat', sans-serif; 
             color: var(--text-dark);
-            -webkit-font-smoothing: antialiased;
+            overflow: hidden; 
         }
 
-        /* Tipografía */
-        h1, h2, h3 { font-family: var(--font-title); font-weight: 500; letter-spacing: -0.02em; }
-        p { font-weight: 300; line-height: 1.6; }
-
-        /* --- CAPA DEL SOBRE (MÁS ELEGANTE) --- */
+        /* --- SOBRE 3D MEJORADO --- */
         #welcome-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: #edece8; z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: transform 1.4s cubic-bezier(0.77, 0, 0.175, 1); /* Animación ultra fluida */
+            background: #e5e0d4; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        .envelope-wrapper {
+            position: relative; width: 320px; height: 200px;
+            background: var(--envelope-dark); /* Color interior */
+            border-radius: 4px; box-shadow: 0 50px 100px rgba(0,0,0,0.2);
             cursor: pointer;
         }
-        .envelope-container {
-            perspective: 1000px;
-        }
-        .envelope {
-            width: 300px; height: 200px; background: #fffcf7;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-            display: flex; justify-content: center; align-items: center;
-            border-radius: 4px; position: relative;
-            transition: transform 0.8s ease;
-        }
-        #welcome-layer:hover .envelope { transform: translateY(-5px); }
-        
-        .wax-seal {
-            width: 65px; height: 65px; 
-            background: #8a1c1c; /* Color vino original */
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            color: #dcbfa5; font-family: var(--font-title); font-size: 1.6rem; font-style: italic;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.25), inset 0 2px 5px rgba(255,255,255,0.2);
-            border: 2px solid #6e1616;
-        }
-        .click-hint { margin-top: 40px; font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: #999; opacity: 0.7; animation: pulse 2.5s infinite; }
 
-        /* --- SITIO PRINCIPAL --- */
-        #main-site { 
-            opacity: 0; visibility: hidden; transition: opacity 2s ease; 
-            height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+        /* Solapa superior */
+        .flap {
+            position: absolute; top: 0; left: 0; width: 0; height: 0;
+            border-left: 160px solid transparent; border-right: 160px solid transparent;
+            border-top: 110px solid #cfc4b0; /* Un tono más oscuro para contraste */
+            transform-origin: top; transition: transform 0.6s ease; z-index: 3;
         }
+
+        /* Cuerpo frontal del sobre */
+        .envelope-front {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            background: var(--envelope-light);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 50% 50%); /* Forma de sobre abierto */
+            z-index: 2;
+        }
+
+        .wax-seal {
+            position: absolute; top: 85px; left: 50%; transform: translateX(-50%);
+            width: 60px; height: 60px; background: #7a1616; border-radius: 50%;
+            z-index: 4; display: flex; justify-content: center; align-items: center;
+            color: #dcbfa5; font-family: 'Cormorant Garamond'; font-size: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: 0.4s;
+        }
+
+        /* Animación de apertura */
+        .open-envelope .flap { transform: rotateX(180deg); z-index: 1; }
+        .open-envelope .wax-seal { opacity: 0; transform: translateX(-50%) scale(0); }
+
+        /* --- CONTENIDO WEB --- */
+        #main-site { opacity: 0; visibility: hidden; transition: 1.5s; height: 100vh; overflow-y: auto; }
         
-        /* --- HEADER IMPACTANTE --- */
         header {
-            height: 100vh;
-            position: relative; overflow: hidden;
+            height: 100vh; position: relative;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2000&auto=format&fit=crop') center/cover;
             display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center;
         }
-        .hero-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            /* Usando la imagen del código proporcionado */
-            background: url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2000&auto=format&fit=crop') center/cover no-repeat;
-            filter: brightness(0.65) grayscale(20%); /* Toque cinemático */
-            transform: scale(1.05); transition: transform 10s ease; /* Efecto zoom lento */
-        }
-        body.loaded .hero-bg { transform: scale(1); }
-        
-        .hero-content { position: relative; z-index: 2; padding: 20px; mix-blend-mode: overlay; }
-        .pre-title { font-size: 0.9rem; letter-spacing: 6px; text-transform: uppercase; margin-bottom: 15px; opacity: 0.9; }
-        .hero-title { font-size: 5rem; line-height: 0.9; margin-bottom: 20px; font-weight: 300; }
-        .hero-date { font-size: 1.3rem; letter-spacing: 8px; border-top: 1px solid rgba(255,255,255,0.5); border-bottom: 1px solid rgba(255,255,255,0.5); padding: 15px 30px; display: inline-block; }
-        .hero-quote { margin-top: 30px; font-style: italic; font-family: var(--font-title); font-size: 1.4rem; opacity: 0.8; }
 
-        /* --- SECCIONES GENERALES --- */
-        section { padding: 100px 20px; max-width: 700px; margin: 0 auto; text-align: center; }
-        .section-title { font-size: 2.5rem; color: var(--text-dark); margin-bottom: 60px; position: relative; padding-bottom: 20px; }
-        .section-title::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 40px; height: 1px; background: var(--accent-gold); }
+        .hero-title { font-family: 'Cormorant Garamond', serif; font-size: 4rem; font-weight: 300; }
+        .hero-date { letter-spacing: 6px; border-top: 1px solid rgba(255,255,255,0.4); border-bottom: 1px solid rgba(255,255,255,0.4); padding: 15px 30px; margin: 25px 0; }
 
-        /* --- CRONOGRAMA MINIMALISTA (Rediseñado) --- */
-        .timeline-container { padding: 20px 0; position: relative; }
-        /* Línea vertical sutil */
-        .timeline-container::before {
-            content: ''; position: absolute; left: 50%; top: 0; width: 1px; height: 100%;
-            background: rgba(0,0,0,0.05); transform: translateX(-50%);
+        /* --- CRONOGRAMA B/N ELEGANTE --- */
+        section { padding: 100px 20px; max-width: 600px; margin: 0 auto; text-align: center; }
+        .timeline-box { display: flex; align-items: center; margin-bottom: 40px; text-align: left; }
+        .icon-square {
+            width: 70px; height: 70px; border: 1.5px solid #000;
+            display: flex; justify-content: center; align-items: center;
+            margin-right: 25px; background: #fff; flex-shrink: 0;
         }
-        .event-item { 
-            display: flex; flex-direction: column; align-items: center; 
-            margin-bottom: 70px; position: relative; z-index: 2;
-        }
-        .event-icon {
-            width: 50px; height: 50px; background: var(--bg-crema); border: 1px solid var(--text-dark);
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-size: 1.2rem; color: var(--text-dark); margin-bottom: 20px;
-            box-shadow: 0 0 0 10px var(--bg-crema); /* "Borra" la línea trasera */
-        }
-        .event-time { font-family: var(--font-title); font-size: 1.8rem; color: var(--accent-gold); font-weight: 600; }
-        .event-title { font-size: 1.3rem; margin: 10px 0 5px; }
-        .event-desc { font-size: 0.9rem; color: var(--text-light); max-width: 300px; margin: 0 auto; }
+        .icon-square i { color: #000; font-size: 1.6rem; }
+        .event-info h3 { font-family: 'Cormorant Garamond'; font-size: 1.8rem; margin: 0; letter-spacing: 1px; }
+        .event-info p { color: #666; font-size: 0.9rem; margin-top: 4px; }
 
-        /* --- BOTONES PREMIUM --- */
-        .btn-minimal {
-            display: inline-block; padding: 15px 40px; background: transparent;
-            border: 1px solid var(--text-dark); color: var(--text-dark);
-            text-decoration: none; text-transform: uppercase; letter-spacing: 3px; font-size: 0.75rem;
-            transition: all 0.4s ease; position: relative; overflow: hidden; z-index: 1;
+        /* --- BOTONES Y OTROS --- */
+        .btn-premium {
+            display: inline-block; padding: 18px 45px; border: 1px solid #000;
+            color: #000; text-decoration: none; text-transform: uppercase;
+            letter-spacing: 4px; font-size: 0.7rem; transition: 0.4s;
         }
-        .btn-minimal::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 0%; height: 100%;
-            background: var(--text-dark); transition: all 0.4s ease; z-index: -1;
-        }
-        .btn-minimal:hover { color: var(--bg-crema); }
-        .btn-minimal:hover::before { width: 100%; }
+        .btn-premium:hover { background: #000; color: #fff; }
 
-        /* --- MÚSICA --- */
-        .music-toggle {
-            position: fixed; bottom: 30px; right: 30px; width: 44px; height: 44px;
-            background: rgba(0,0,0,0.8); border-radius: 50%; color: white;
-            display: flex; justify-content: center; align-items: center; font-size: 0.9rem;
-            cursor: pointer; z-index: 100; transition: 0.3s; opacity: 0.6;
-        }
-        .music-toggle:hover { opacity: 1; }
-        .music-playing { animation: spin 4s linear infinite; }
-
-        /* --- ANIMACIONES --- */
-        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        
-        /* Ajustes móviles */
-        @media (max-width: 768px) {
-            .hero-title { font-size: 3.5rem; }
-            .hero-date { letter-spacing: 5px; font-size: 1.1rem; }
-            section { padding: 70px 20px; }
-        }
+        .countdown { display: flex; justify-content: center; gap: 30px; margin-bottom: 50px; }
+        .count-num { font-family: 'Cormorant Garamond'; font-size: 2.5rem; display: block; }
+        .count-label { font-size: 0.6rem; letter-spacing: 2px; color: #999; }
     </style>
 </head>
-<body onclick="startExperience()">
+<body onclick="iniciar()">
 
-    <audio id="bg-music" loop>
+    <audio id="musica" loop>
         <source src="https://www.chosic.com/wp-content/uploads/2021/07/Rainy-Day-Games.mp3" type="audio/mpeg">
     </audio>
 
     <div id="welcome-layer">
-        <div class="envelope-container">
-            <div class="envelope">
-                <div class="wax-seal">M&F</div>
-            </div>
+        <div class="envelope-wrapper" id="sobre">
+            <div class="flap"></div>
+            <div class="envelope-front"></div>
+            <div class="wax-seal">M&F</div>
         </div>
-        <p class="click-hint">TOCA PARA DESCUBRIR</p>
+        <p style="position:absolute; bottom:20%; letter-spacing:4px; font-size:0.7rem; color:#8a765a;">TOCA EL SOBRE PARA ABRIR</p>
     </div>
 
     <div id="main-site">
         <header>
-            <div class="hero-bg"></div>
-            <div class="hero-content reveal">
-                <p class="pre-title">NOS CASAMOS</p>
-                <h1 class="hero-title">María & Freddy</h1>
-                <div class="hero-date">24.10.2026</div>
-                <p class="hero-quote">"Ambulancias forever"</p>
-            </div>
+            <p style="letter-spacing: 5px; font-size: 0.8rem;">NOS CASAMOS</p>
+            <h1 class="hero-title">María & Freddy</h1>
+            <div class="hero-date">24 . OCTUBRE . 2026</div>
+            <p style="font-style: italic; opacity: 0.8;">"Ambulancias forever"</p>
         </header>
 
-        <section id="timeline">
-            <h2 class="section-title reveal">Itinerario del Día</h2>
-            <div class="timeline-container">
-                <div class="event-item reveal" data-delay="200">
-                    <div class="event-icon"><i class="fas fa-church"></i></div>
-                    <div class="event-time">12:30</div>
-                    <h3 class="event-title">Ceremonia</h3>
-                    <p class="event-desc">Concatedral Sta. María la Redonda</p>
-                </div>
-                <div class="event-item reveal" data-delay="400">
-                    <div class="event-icon"><i class="fas fa-glass-cheers"></i></div>
-                    <div class="event-time">14:30</div>
-                    <h3 class="event-title">Cóctel</h3>
-                    <p class="event-desc">Bienvenida, brindis y aperitivos</p>
-                </div>
-                <div class="event-item reveal" data-delay="600">
-                    <div class="event-icon"><i class="fas fa-utensils"></i></div>
-                    <div class="event-time">15:30</div>
-                    <h3 class="event-title">Banquete</h3>
-                    <p class="event-desc">Comida y celebración</p>
-                </div>
-                <div class="event-item reveal" data-delay="800">
-                    <div class="event-icon"><i class="fas fa-music"></i></div>
-                    <div class="event-time">18:00</div>
-                    <h3 class="event-title">Fiesta</h3>
-                    <p class="event-desc">¡A bailar hasta el amanecer!</p>
-                </div>
+        <section>
+            <div class="countdown reveal">
+                <div><span class="count-num" id="d">00</span><span class="count-label">DÍAS</span></div>
+                <div><span class="count-num" id="h">00</span><span class="count-label">HORAS</span></div>
+                <div><span class="count-num" id="m">00</span><span class="count-label">MIN</span></div>
+            </div>
+            <h2 style="font-family:'Cormorant Garamond'; font-size:2.5rem; margin-bottom:60px;">Itinerario</h2>
+            
+            <div class="timeline-box reveal">
+                <div class="icon-square"><i class="fas fa-church"></i></div>
+                <div class="event-info"><h3>12:30 - Ceremonia</h3><p>Concatedral Sta. María la Redonda, Logroño</p></div>
+            </div>
+            
+            <div class="timeline-box reveal">
+                <div class="icon-square"><i class="fas fa-glass-cheers"></i></div>
+                <div class="event-info"><h3>14:30 - Cóctel</h3><p>Aperitivos y bienvenida</p></div>
+            </div>
+
+            <div class="timeline-box reveal">
+                <div class="icon-square"><i class="fas fa-utensils"></i></div>
+                <div class="event-info"><h3>15:30 - Banquete</h3><p>Celebración y cena</p></div>
+            </div>
+
+            <div class="timeline-box reveal">
+                <div class="icon-square"><i class="fas fa-music"></i></div>
+                <div class="event-info"><h3>18:00 - Fiesta</h3><p>¡A bailar forever!</p></div>
             </div>
         </section>
 
-        <section id="location" style="background: white;">
-            <h2 class="section-title reveal">Ubicación</h2>
-            <div class="reveal">
-                <p style="font-size: 1.2rem; margin-bottom: 10px;">Concatedral de Sta. María la Redonda</p>
-                <p style="color: var(--text-light); margin-bottom: 30px;">Logroño, La Rioja</p>
-                <a href="https://maps.app.goo.gl/9T5ZExCByj8xYp6x8" target="_blank" class="btn-minimal">VER MAPA</a>
+        <section style="background: #fff; max-width: 100%;">
+            <h2 style="font-family:'Cormorant Garamond'; font-size:2.5rem;">Ubicación</h2>
+            <p style="margin: 20px 0; color:#666;">Logroño, La Rioja</p>
+            <a href="https://maps.app.goo.gl/3AXYm8Xn69UvEAtM8" target="_blank" class="btn-premium">VER EN GOOGLE MAPS</a>
+        </section>
+
+        <section>
+            <h2 style="font-family:'Cormorant Garamond'; font-size:2.5rem;">Asistencia</h2>
+            <p style="margin-bottom: 40px;">Por favor, confirmad antes del 24 de agosto.</p>
+            <a href="https://wa.me/34600000000?text=¡Hola! Confirmamos nuestra asistencia" class="btn-premium">CONFIRMAR WHATSAPP</a>
+            
+            <div style="margin-top: 100px;">
+                <h3 style="font-family:'Cormorant Garamond';">Detalle</h3>
+                <p style="font-size: 0.9rem; color:#888; margin: 15px 0;">Vuestra presencia es nuestro mejor regalo.</p>
+                <button onclick="alert('IBAN: ES21 0000 0000 0000 0000')" style="background:none; border:none; text-decoration:underline; cursor:pointer; font-size:0.7rem; letter-spacing:2px;">VER CUENTA BANCARIA</button>
             </div>
         </section>
 
-        <section id="rsvp">
-            <h2 class="section-title reveal">Asistencia</h2>
-            <div class="reveal">
-                <p style="margin-bottom: 30px;">Esperamos contar contigo en este día tan especial.<br>Por favor, confirma antes del 24 de Agosto.</p>
-                <a href="https://wa.me/34600000000" class="btn-minimal">CONFIRMAR POR WHATSAPP</a>
-            </div>
-        </section>
-
-    </div>
-
-    <div class="music-toggle" onclick="toggleAudio(event)">
-        <i class="fas fa-music"></i>
+        <footer style="padding: 50px; font-size: 0.6rem; letter-spacing: 3px; color: #aaa;">M & F | 2026</footer>
     </div>
 
     <script>
-        let audioPlaying = false;
-        const music = document.getElementById('bg-music');
-        const musicBtn = document.querySelector('.music-toggle i');
+        function iniciar() {
+            // Abrir sobre
+            document.getElementById('sobre').classList.add('open-envelope');
+            document.getElementById('musica').play();
+            
+            // Efecto confeti
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.7 }, colors: ['#a48b68', '#ffffff', '#000000'] });
 
-        function startExperience() {
-            // Bloquear scroll mientras se abre
-            document.body.style.overflow = 'hidden';
-            
-            // 1. Abrir el sobre (animación CSS)
-            document.getElementById('welcome-layer').style.transform = 'translateY(-100%)';
-            
-            // 2. Reproducir música suavemente
-            music.volume = 0.4;
-            music.play().then(() => {
-                audioPlaying = true;
-                document.querySelector('.music-toggle').classList.add('music-playing');
-            }).catch(e => console.log("Audio requiere interacción previa"));
-
-            // 3. Confeti elegante (colores personalizados)
-            confetti({ 
-                particleCount: 120, 
-                spread: 100, 
-                origin: { y: 0.6 },
-                colors: ['#a48b68', '#faf9f6', '#dcbfa5'],
-                startVelocity: 30,
-                gravity: 0.8,
-                ticks: 300
-            });
-            
-            // 4. Mostrar el sitio principal
+            // Transición a la web
             setTimeout(() => {
-                const site = document.getElementById('main-site');
-                site.style.visibility = 'visible';
-                site.style.opacity = '1';
+                document.getElementById('welcome-layer').style.transform = 'translateY(-100%)';
+                document.getElementById('main-site').style.visibility = 'visible';
+                document.getElementById('main-site').style.opacity = '1';
                 document.body.style.overflow = 'auto';
-                document.body.classList.add('loaded'); // Activa zoom de fondo
                 
-                // Inicializar animaciones de scroll (más lentas y elegantes)
-                ScrollReveal().reveal('.reveal', { 
-                    distance: '40px', 
-                    duration: 1800, 
-                    easing: 'cubic-bezier(0.23, 1, 0.32, 1)',
-                    origin: 'bottom', 
-                    interval: 250,
-                    viewFactor: 0.2
-                });
+                ScrollReveal().reveal('.reveal', { distance: '40px', duration: 1500, origin: 'bottom', interval: 250 });
             }, 800);
         }
 
-        // Controlar música sin cerrar la web
-        function toggleAudio(e) {
-            e.stopPropagation(); // Evita que el clic cierre el sobre si se pulsa al inicio
-            if (audioPlaying) {
-                music.pause();
-                musicBtn.classList.remove('fa-music');
-                musicBtn.classList.add('fa-volume-xmark');
-                document.querySelector('.music-toggle').classList.remove('music-playing');
-            } else {
-                music.play();
-                musicBtn.classList.remove('fa-volume-xmark');
-                musicBtn.classList.add('fa-music');
-                document.querySelector('.music-toggle').classList.add('music-playing');
-            }
-            audioPlaying = !audioPlaying;
-        }
+        // Cuenta atrás básica
+        const target = new Date("Oct 24, 2026 12:30:00").getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const d = target - now;
+            document.getElementById('d').innerText = Math.floor(d / 86400000);
+            document.getElementById('h').innerText = Math.floor((d % 86400000) / 3600000);
+            document.getElementById('m').innerText = Math.floor((d % 3600000) / 60000);
+        }, 1000);
     </script>
 </body>
 </html>
+
 
 
 
