@@ -3,26 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Boda María & Freddy</title>
+    <title>María & Freddy 2026</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital@0;1&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/scrollreveal"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --oro: #b4975a; --crema: #f9f7f2; --vino: #630d16; }
-        body, html { margin: 0; padding: 0; background: var(--crema); font-family: 'Montserrat', sans-serif; overflow: hidden; width: 100%; height: 100%; position: fixed; }
-        #envelope-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e8e2d6; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .envelope { position: relative; width: 280px; height: 180px; background: #fffcf5; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 4px; cursor: pointer; }
+        :root { --oro: #b4975a; --crema: #f9f7f2; --vino: #630d16; --texto: #333; }
+        body, html { margin: 0; padding: 0; background: var(--crema); font-family: 'Montserrat', sans-serif; color: var(--texto); overflow-x: hidden; }
+        
+        /* SOBRE INICIAL */
+        #envelope-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #e8e2d6; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
+        .envelope { position: relative; width: 280px; height: 180px; background: #fffcf5; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 4px; }
         .flap { position: absolute; top: 0; left: 0; width: 0; height: 0; border-left: 140px solid transparent; border-right: 140px solid transparent; border-top: 100px solid #dcd3c1; transform-origin: top; transition: 0.6s; z-index: 3; }
         .seal { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; background: var(--vino); border-radius: 50%; z-index: 4; display: flex; align-items: center; justify-content: center; color: var(--oro); font-family: 'Cinzel', serif; font-weight: bold; border: 2px solid #80101b; }
         .open-env .flap { transform: rotateX(180deg); }
         .open-env .seal { opacity: 0; transform: translateX(-50%) scale(0); }
-        #main-content { opacity: 0; display: none; transition: 1s; height: 100vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center; box-sizing: border-box; }
-        h1 { font-family: 'Cinzel', serif; font-size: 2.2rem; color: var(--oro); margin: 10px 0; }
-        .btn { display: inline-block; padding: 12px 25px; margin: 10px; border: 1px solid var(--oro); color: var(--oro); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; }
+
+        /* CONTENIDO WEB */
+        #main-content { opacity: 0; display: none; transition: 1s; }
+        section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px 20px; text-align: center; box-sizing: border-box; }
+        h1 { font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--oro); margin: 10px 0; }
+        h2 { font-family: 'Cinzel', serif; color: var(--oro); font-size: 1.5rem; margin-bottom: 30px; }
+        
+        /* LÍNEA CRONOLÓGICA */
+        .timeline { position: relative; max-width: 400px; margin: 0 auto; padding: 20px 0; }
+        .timeline-item { padding: 20px; border-left: 2px solid var(--oro); position: relative; margin-left: 20px; text-align: left; }
+        .timeline-item::before { content: ''; position: absolute; left: -9px; top: 25px; width: 16px; height: 16px; background: var(--crema); border: 2px solid var(--oro); border-radius: 50%; }
+        .time { font-weight: bold; color: var(--oro); font-family: 'Cinzel'; }
+
+        .btn { display: inline-block; padding: 12px 25px; margin: 15px 5px; border: 1px solid var(--oro); color: var(--oro); text-decoration: none; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; transition: 0.3s; }
+        .btn:hover { background: var(--oro); color: white; }
+        .phrase { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.2rem; margin: 20px 0; }
     </style>
 </head>
-<body onclick="abrir()">
+<body onclick="abrirInvitacion()">
+
     <div id="envelope-container">
         <div class="envelope" id="sobre">
             <div class="flap"></div>
@@ -30,36 +45,76 @@
         </div>
         <p style="margin-top: 30px; font-family: 'Cinzel'; color: #8a765a;">Toca para abrir</p>
     </div>
+
     <div id="main-content">
         <section>
             <div class="reveal">
-                <p>NUESTRA BODA</p>
+                <p style="letter-spacing: 5px;">NUESTRA BODA</p>
                 <h1>María & Freddy</h1>
-                <p style="font-family: 'Playfair Display'; font-style: italic;">"Ambulancias forever"</p>
-                <div style="border-top: 1px solid var(--oro); border-bottom: 1px solid var(--oro); padding: 10px 30px; margin: 20px 0;">24 . 10 . 2026 | 12:00H</div>
-                <p>Concatedral de Sta María la Redonda</p>
+                <p class="phrase">"Ambulancias forever"</p>
+                <div style="border-top: 1px solid var(--oro); border-bottom: 1px solid var(--oro); padding: 10px 40px; margin: 20px 0;">
+                    24 . 10 . 2026
+                </div>
             </div>
         </section>
-        <section style="background: white;">
+
+        <section style="background-color: #fff;">
             <div class="reveal">
-                <h2>¿Cómo llegar?</h2>
-                <a href="https://maps.app.goo.gl/3fX3y1Vv8A6pS6Kz8" target="_blank" class="btn">Abrir Mapa</a>
-                <h2 style="margin-top:40px">Confirmación</h2>
-                <a href="https://wa.me/?text=Confirmamos nuestra asistencia" class="btn">WhatsApp</a>
+                <h2>Cronograma del Día</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="time">12:00H</span>
+                        <p><strong>Ceremonia Religiosa</strong><br>Concatedral de Sta María la Redonda</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="time">14:00H</span>
+                        <p><strong>Cóctel de Bienvenida</strong><br>Celebración y brindis</p>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="time">15:30H</span>
+                        <p><strong>Banquete y Fiesta</strong><br>¡A bailar "forever"!</p>
+                    </div>
+                </div>
             </div>
+        </section>
+
+        <section>
+            <div class="reveal">
+                <h2>Ubicación</h2>
+                <p>Concatedral de Santa María la Redonda<br>Logroño, La Rioja</p>
+                <a href="https://maps.app.goo.gl/YyR9YmYvN5uXWjQy8" target="_blank" class="btn">Abrir en Google Maps</a>
+                
+                <h2 style="margin-top:50px">Asistencia</h2>
+                <p>Por favor, confirma antes del 24 de agosto.</p>
+                <a href="https://wa.me/?text=¡Hola! Confirmamos nuestra asistencia a vuestra boda." class="btn">Confirmar WhatsApp</a>
+            </div>
+        </section>
+
+        <section style="background-color: #fff;">
+            <div class="reveal">
+                <h2>Detalles</h2>
+                <p>Vuestra presencia es nuestro mejor regalo, pero si queréis tener un detalle:</p>
+                <button class="btn" onclick="alert('IBAN: ES00 0000 0000 0000 0000')">Ver Cuenta Bancaria</button>
+                
+                <h2 style="margin-top:50px">Playlist</h2>
+                <p>¿Qué canción no puede faltar?</p>
+                <a href="#" class="btn" style="font-size:0.7rem">Añadir Música</a>
+            </div>
+            <p style="margin-top: 80px; opacity: 0.3; font-size: 0.8rem;">M & F | 2026</p>
         </section>
     </div>
+
     <script>
-        function abrir() {
+        function abrirInvitacion() {
             document.getElementById('sobre').classList.add('open-env');
-            if(typeof confetti === "function") confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#b4975a', '#630d16', '#ffffff'] });
+            
             setTimeout(() => {
                 document.getElementById('envelope-container').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('envelope-container').style.display = 'none';
                     document.getElementById('main-content').style.display = 'block';
                     document.getElementById('main-content').style.opacity = '1';
-                    document.body.style.position = 'static';
                     document.body.style.overflow = 'auto';
                     ScrollReveal().reveal('.reveal', { distance: '50px', duration: 1000, origin: 'bottom', interval: 200 });
                 }, 500);
@@ -68,3 +123,4 @@
     </script>
 </body>
 </html>
+
