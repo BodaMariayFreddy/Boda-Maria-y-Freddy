@@ -202,7 +202,9 @@
     <script>
         function abrirTodo() {
             document.getElementById('miSobre').classList.add('abierto');
-            document.getElementById('musica').play().catch(e => console.log("Audio requiere interacción previa"));
+            var audio = document.getElementById('musica');
+            audio.currentTime = 8;
+            audio.play().catch(e => console.log("Audio requiere interacción"));
             
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.7 }, colors: ['#a48b68', '#ffffff', '#000000'] });
             
